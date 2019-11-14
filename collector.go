@@ -41,7 +41,6 @@ var (
 	)
 )
 
-// ZCASH_PEERS = Gauge("zcash_peers", "Number of peers")
 // ZCASH_SOLS = Gauge("zcash_sols", "Estimated network solutions per second")
 
 // ZCASH_ERRORS = Counter("zcash_errors", "Number of errors detected")
