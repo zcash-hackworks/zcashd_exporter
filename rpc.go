@@ -25,3 +25,14 @@ type ZGetTotalBalance struct {
 	Private     string `json:"private"`
 	Total       string `json:"total"`
 }
+
+// GetChainTips Return information about all known tips in the block tree, including the main chain as well as orphaned branches.
+// https://zcash-rpc.github.io/getchaintips.html
+type GetChainTips []ChainTip
+
+type ChainTip struct {
+	Height    float64 `json:"height"`
+	Hash      string  `json:"hash"`
+	Branchlen float64 `json:"branchlen"`
+	Status    string  `json:"status"`
+}
