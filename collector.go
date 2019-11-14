@@ -27,6 +27,18 @@ var (
 		[]string{
 			"type",
 		})
+	zcashdChainTips = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "zcash_chain_tip",
+			Help: "Return information about all known tips in the block tree, including the main chain as well as orphaned branches."},
+		[]string{"height", "hash", "branchlen", "status"},
+	)
+	zcashdPeerInfo = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "zcash_peer_info",
+			Help: "Returns data about each connected network node."},
+		[]string{"id", "addr", "addrlocal", "services", "lastsend", "lastrecv", "bytessent", "bytesrecv", "conntime", "timeoffset", "pingtime", "pingwait", "version", "subver", "inbound", "startingheight", "banscore", "synced_headers", "synced_blocks"},
+	)
 )
 
 // ZCASH_PEERS = Gauge("zcash_peers", "Number of peers")
@@ -36,9 +48,6 @@ var (
 
 // ZCASH_LATEST_BLOCK_SIZE = Gauge("zcash_latest_block_size", "Size of latest block in bytes")
 // ZCASH_LATEST_BLOCK_TXS = Gauge("zcash_latest_block_txs", "Number of transactions in latest block")
-
-// ZCASH_CHAINFORK_LOCATION = Gauge("zcash_chainfork_location", "Block height of chain fork")
-// ZCASH_CHAINFORK_SIZE = Gauge("zcash_chainfork_size", "Length of chain fork")
 
 // ZCASH_TOTAL_BYTES_RECV = Gauge("zcash_total_bytes_recv", "Total bytes received")
 // ZCASH_TOTAL_BYTES_SENT = Gauge("zcash_total_bytes_sent", "Total bytes sent")
@@ -61,4 +70,6 @@ func init() {
 	prometheus.MustRegister(zcashdMemPoolBytes)
 	prometheus.MustRegister(zcashdMemPoolUsage)
 	prometheus.MustRegister(zcashdWalletBalance)
+	prometheus.MustRegister(zcashdChainTips)
+	prometheus.MustRegister(zcashdPeerInfo)
 }

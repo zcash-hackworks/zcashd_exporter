@@ -55,6 +55,8 @@ func main() {
 	go getBlockchainInfo()
 	go getMemPoolInfo()
 	go getWalletInfo()
+	go getChainTips()
+	go getPeerInfo()
 	log.Infoln("Listening on", *listenAddress)
 	if err := http.ListenAndServe(*listenAddress, nil); err != nil {
 		log.Fatal(err)
@@ -127,6 +129,76 @@ func getWalletInfo() {
 			}
 			if total, err := strconv.ParseFloat(walletinfo.Total, 64); err == nil {
 				zcashdWalletBalance.WithLabelValues("total").Set(total)
+			}
+		}
+		time.Sleep(time.Duration(30) * time.Second)
+	}
+
+}
+
+func getChainTips() {
+	basicAuth := base64.StdEncoding.EncodeToString([]byte(*rpcUser + ":" + *rpcPassword))
+	rpcClient := jsonrpc.NewClientWithOpts("http://"+*rpcHost+":"+*rpcPort,
+		&jsonrpc.RPCClientOpts{
+			CustomHeaders: map[string]string{
+				"Authorization": "Basic " + basicAuth,
+			}})
+	var chaintips *GetChainTips
+
+	for {
+		if err := rpcClient.CallFor(&chaintips, "getchaintips"); err != nil {
+			log.Warnln("Error calling getchaintips", err)
+		} else {
+			for _, ct := range *chaintips {
+				log.Infoln("Got chaintip: ", ct.Height)
+				zcashdChainTips.WithLabelValues(
+					strconv.FormatFloat(ct.Height, 'f', 2, 64),
+					ct.Hash,
+					strconv.FormatFloat(ct.Branchlen, 'f', 2, 64),
+					ct.Status).Set(ct.Height)
+			}
+		}
+		time.Sleep(time.Duration(30) * time.Second)
+	}
+
+}
+
+func getPeerInfo() {
+	basicAuth := base64.StdEncoding.EncodeToString([]byte(*rpcUser + ":" + *rpcPassword))
+	rpcClient := jsonrpc.NewClientWithOpts("http://"+*rpcHost+":"+*rpcPort,
+		&jsonrpc.RPCClientOpts{
+			CustomHeaders: map[string]string{
+				"Authorization": "Basic " + basicAuth,
+			}})
+	var peerinfo *GetPeerInfo
+
+	for {
+		if err := rpcClient.CallFor(&peerinfo, "getpeerinfo"); err != nil {
+			log.Warnln("Error calling getchaintips", err)
+		} else {
+			for _, pi := range *peerinfo {
+				log.Infoln("Got peerinfo: ", pi.Addr)
+				zcashdPeerInfo.WithLabelValues(
+					strconv.Itoa(pi.ID),
+					pi.Addr,
+					pi.AddrLocal,
+					pi.Services,
+					strconv.Itoa(pi.LastSend),
+					strconv.Itoa(pi.LastRecv),
+					strconv.Itoa(pi.BytesSent),
+					strconv.Itoa(pi.BytesRecv),
+					strconv.Itoa(pi.Conntime),
+					strconv.Itoa(pi.Timeoffset),
+					strconv.FormatFloat(pi.PingTime, 'f', 2, 64),
+					strconv.Itoa(pi.PingWait),
+					strconv.Itoa(pi.Version),
+					pi.Subver,
+					strconv.FormatBool(pi.Inbound),
+					strconv.Itoa(pi.Startingheight),
+					strconv.Itoa(pi.Banscore),
+					strconv.Itoa(pi.SyncedHeaders),
+					strconv.Itoa(pi.SyncedBlocks),
+				).Set(float64(pi.ID))
 			}
 		}
 		time.Sleep(time.Duration(30) * time.Second)
