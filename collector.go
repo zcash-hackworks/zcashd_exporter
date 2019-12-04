@@ -27,6 +27,12 @@ var (
 		[]string{
 			"type",
 		})
+	zcashdChainTips = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "zcash_chain_tip",
+			Help: "Return information about all known tips in the block tree, including the main chain as well as orphaned branches."},
+		[]string{"height", "hash", "branchlen", "status"},
+	)
 )
 
 // ZCASH_PEERS = Gauge("zcash_peers", "Number of peers")
@@ -61,4 +67,5 @@ func init() {
 	prometheus.MustRegister(zcashdMemPoolBytes)
 	prometheus.MustRegister(zcashdMemPoolUsage)
 	prometheus.MustRegister(zcashdWalletBalance)
+	prometheus.MustRegister(zcashdChainTips)
 }

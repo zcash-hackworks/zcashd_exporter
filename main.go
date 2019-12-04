@@ -55,6 +55,7 @@ func main() {
 	go getBlockchainInfo()
 	go getMemPoolInfo()
 	go getWalletInfo()
+	go getChainTips()
 	log.Infoln("Listening on", *listenAddress)
 	if err := http.ListenAndServe(*listenAddress, nil); err != nil {
 		log.Fatal(err)
@@ -127,6 +128,33 @@ func getWalletInfo() {
 			}
 			if total, err := strconv.ParseFloat(walletinfo.Total, 64); err == nil {
 				zcashdWalletBalance.WithLabelValues("total").Set(total)
+			}
+		}
+		time.Sleep(time.Duration(30) * time.Second)
+	}
+
+}
+
+func getChainTips() {
+	basicAuth := base64.StdEncoding.EncodeToString([]byte(*rpcUser + ":" + *rpcPassword))
+	rpcClient := jsonrpc.NewClientWithOpts("http://"+*rpcHost+":"+*rpcPort,
+		&jsonrpc.RPCClientOpts{
+			CustomHeaders: map[string]string{
+				"Authorization": "Basic " + basicAuth,
+			}})
+	var chaintips *GetChainTips
+
+	for {
+		if err := rpcClient.CallFor(&chaintips, "getchaintips"); err != nil {
+			log.Warnln("Error calling getchaintips", err)
+		} else {
+			for _, ct := range *chaintips {
+				log.Infoln("Got chaintip: ", ct.Height)
+				zcashdChainTips.WithLabelValues(
+					strconv.FormatFloat(ct.Height, 'f', 2, 64),
+					ct.Hash,
+					strconv.FormatFloat(ct.Branchlen, 'f', 2, 64),
+					ct.Status).Set(ct.Height)
 			}
 		}
 		time.Sleep(time.Duration(30) * time.Second)
