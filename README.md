@@ -12,7 +12,7 @@ $GOPATH/bin/zcashd_exporter --help
 
 ## Getting Started With docker-compose
 
-#### Create zcashd direcotries
+### Create zcashd direcotries
 
 Decide where you want to store (or refence existing ) zcashd data.
 
@@ -30,7 +30,7 @@ sudo chown -R 2001 /srv/zcashd/.zcash
 sudo chown -R 2001 /srv/zcashd/.zcash-params
 ```
 
-#### Create .env from .env.exmaple
+### Create .env from .env.exmaple
 
 ```
 cp .env.exmaple .env
@@ -38,7 +38,7 @@ cp .env.exmaple .env
 
 Edit `.env` if you have any specific changes.
 
-#### Start docker-compose
+### Start docker-compose
 
 Start with
 ```
