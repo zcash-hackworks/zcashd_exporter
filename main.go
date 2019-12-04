@@ -56,6 +56,7 @@ func main() {
 	go getMemPoolInfo()
 	go getWalletInfo()
 	go getPeerInfo()
+	go getChainTips()
 	log.Infoln("Listening on", *listenAddress)
 	if err := http.ListenAndServe(*listenAddress, nil); err != nil {
 		log.Fatal(err)
@@ -199,6 +200,33 @@ func getPeerInfo() {
 				// 	strconv.Itoa(pi.SyncedHeaders),
 				// 	strconv.Itoa(pi.SyncedBlocks),
 				// ).Set(float64(pi.ID))
+			}
+		}
+		time.Sleep(time.Duration(30) * time.Second)
+	}
+
+}
+
+func getChainTips() {
+	basicAuth := base64.StdEncoding.EncodeToString([]byte(*rpcUser + ":" + *rpcPassword))
+	rpcClient := jsonrpc.NewClientWithOpts("http://"+*rpcHost+":"+*rpcPort,
+		&jsonrpc.RPCClientOpts{
+			CustomHeaders: map[string]string{
+				"Authorization": "Basic " + basicAuth,
+			}})
+	var chaintips *GetChainTips
+
+	for {
+		if err := rpcClient.CallFor(&chaintips, "getchaintips"); err != nil {
+			log.Warnln("Error calling getchaintips", err)
+		} else {
+			for _, ct := range *chaintips {
+				log.Infoln("Got chaintip: ", ct.Hash)
+				zcashdChainTips.WithLabelValues(
+					ct.Hash,
+					strconv.Itoa(ct.Branchlen),
+					ct.Status,
+				).Set(float64(ct.Height))
 			}
 		}
 		time.Sleep(time.Duration(30) * time.Second)
