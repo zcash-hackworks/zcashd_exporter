@@ -38,6 +38,12 @@ cp .env.exmaple .env
 
 Edit `.env` if you have any specific changes.
 
+### Install loki docker loging driver
+
+```
+docker plugin install  grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
+```
+
 #### Start docker-compose
 
 Start with
