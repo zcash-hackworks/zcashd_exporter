@@ -25,3 +25,29 @@ type ZGetTotalBalance struct {
 	Private     string `json:"private"`
 	Total       string `json:"total"`
 }
+
+// GetPeerInfo Returns data about each connected network node
+// https://zcash-rpc.github.io/getpeerinfo.html
+type GetPeerInfo []PeerInfo
+
+type PeerInfo struct {
+	ID             int     `json:"id"`
+	Addr           string  `json:"addr"`
+	AddrLocal      string  `json:"addrlocal"`
+	Services       string  `json:"services"`
+	LastSend       int     `json:"lastsend"`
+	LastRecv       int     `json:"lastrecv"`
+	BytesSent      int     `json:"bytessent"`
+	BytesRecv      int     `json:"bytesrecv"`
+	Conntime       int     `json:"conntime"`
+	Timeoffset     int     `json:"timeoffset"`
+	PingTime       float64 `json:"pingtime"`
+	PingWait       int     `json:"pingwait"`
+	Version        int     `json:"version"`
+	Subver         string  `json:"subver"`
+	Inbound        bool    `json:"inbound"`
+	Startingheight int     `json:"startingheight"`
+	Banscore       int     `json:"banscore"`
+	SyncedHeaders  int     `json:"synced_headers"`
+	SyncedBlocks   int     `json:"synced_blocks"`
+}
