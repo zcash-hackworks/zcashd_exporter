@@ -51,3 +51,14 @@ type PeerInfo struct {
 	SyncedHeaders  int     `json:"synced_headers"`
 	SyncedBlocks   int     `json:"synced_blocks"`
 }
+
+// GetChainTips Return information about all known tips in the block tree
+// https://zcash-rpc.github.io/getchaintips.html
+type GetChainTips []ChainTip
+
+type ChainTip struct {
+	Height    int    `json:"height"`
+	Hash      string `json:"hash"`
+	Branchlen int    `json:"branchlen"`
+	Status    string `json:"status"`
+}
