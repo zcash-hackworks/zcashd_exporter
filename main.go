@@ -80,6 +80,7 @@ func getBlockchainInfo() {
 			zcashdBlocks.Set(float64(blockinfo.Blocks))
 			zcashdDifficulty.Set(blockinfo.Difficulty)
 			zcashdVerificationProgress.Set(blockinfo.VerificationProgress)
+			zcashdSizeOnDisk.Set(blockinfo.SizeOnDisk)
 		}
 		time.Sleep(time.Duration(30) * time.Second)
 	}
