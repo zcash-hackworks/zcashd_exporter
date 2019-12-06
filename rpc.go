@@ -10,6 +10,12 @@ type GetBlockchainInfo struct {
 	SizeOnDisk           float64 `json:"size_on_disk"`
 }
 
+// GetInfo Returns an object containing various state info.
+// https://zcash-rpc.github.io/getinfo.html
+type GetInfo struct {
+	Version int `json:"version"`
+}
+
 // GetMemPoolInfo return the zcashd rpc `getmempoolinfo`
 // https://zcash-rpc.github.io/getmempoolinfo.html
 type GetMemPoolInfo struct {

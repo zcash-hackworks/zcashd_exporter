@@ -52,6 +52,7 @@ func main() {
 		</body>
 		</html>`))
 	})
+	go getInfo()
 	go getBlockchainInfo()
 	go getMemPoolInfo()
 	go getWalletInfo()
@@ -59,6 +60,27 @@ func main() {
 	log.Infoln("Listening on", *listenAddress)
 	if err := http.ListenAndServe(*listenAddress, nil); err != nil {
 		log.Fatal(err)
+	}
+
+}
+
+func getInfo() {
+	basicAuth := base64.StdEncoding.EncodeToString([]byte(*rpcUser + ":" + *rpcPassword))
+	rpcClient := jsonrpc.NewClientWithOpts("http://"+*rpcHost+":"+*rpcPort,
+		&jsonrpc.RPCClientOpts{
+			CustomHeaders: map[string]string{
+				"Authorization": "Basic " + basicAuth,
+			}})
+	var info *GetInfo
+
+	for {
+		if err := rpcClient.CallFor(&info, "getinfo"); err != nil {
+			log.Warnln("Error calling getinfo", err)
+		} else {
+			zcashdInfo.WithLabelValues(
+				strconv.Itoa(info.Version)).Set(1)
+		}
+		time.Sleep(time.Duration(30) * time.Second)
 	}
 
 }
@@ -76,6 +98,10 @@ func getBlockchainInfo() {
 		if err := rpcClient.CallFor(&blockinfo, "getblockchaininfo"); err != nil {
 			log.Warnln("Error calling getblockchaininfo", err)
 		} else {
+
+			zcashdBlockchainInfo.WithLabelValues(
+				blockinfo.Chain, strconv.Itoa(blockinfo.Blocks)).Set(1)
+
 			zcashdBlocks.Set(float64(blockinfo.Blocks))
 			zcashdDifficulty.Set(blockinfo.Difficulty)
 			zcashdVerificationProgress.Set(blockinfo.VerificationProgress)
