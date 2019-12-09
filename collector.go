@@ -8,8 +8,8 @@ import (
 var (
 	zcashdBlockchainInfo = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "zcash_network",
-			Help: "Current network name as defined in BIP70"},
+			Name: "zcash_blockchain_info",
+			Help: "Information about the current state of the block chain"},
 		[]string{"network", "blocks"},
 	)
 	zcashdInfo = prometheus.NewGaugeVec(
