@@ -52,12 +52,12 @@ var (
 			Help: "Bytes received from peer node."},
 		[]string{"addr", "addrlocal", "inbound", "banscore", "subver"},
 	)
-	zcashdChainTips = prometheus.NewGaugeVec(
+	zcashdChainTipLength = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "zcash_chainips_at_height",
-			Help: "Information about all known tips in the block tree.",
+			Name: "zcash_chainip_length",
+			Help: "Chain tip length",
 		},
-		[]string{"hash", "branchlen", "status"},
+		[]string{"hash", "status", "height"},
 	)
 )
 
@@ -97,5 +97,5 @@ func init() {
 	prometheus.MustRegister(zcashdPeerConnTime)
 	prometheus.MustRegister(zcashdPeerBytesSent)
 	prometheus.MustRegister(zcashdPeerBytesRecv)
-	prometheus.MustRegister(zcashdChainTips)
+	prometheus.MustRegister(zcashdChainTipLength)
 }

@@ -223,11 +223,11 @@ func getChainTips() {
 		} else {
 			for _, ct := range *chaintips {
 				log.Infoln("Got chaintip: ", ct.Hash)
-				zcashdChainTips.WithLabelValues(
+				zcashdChainTipLength.WithLabelValues(
 					ct.Hash,
-					strconv.Itoa(ct.Branchlen),
 					ct.Status,
-				).Set(float64(ct.Height))
+					strconv.Itoa(ct.Height),
+				).Set(float64(ct.Branchlen))
 			}
 		}
 		time.Sleep(time.Duration(30) * time.Second)
