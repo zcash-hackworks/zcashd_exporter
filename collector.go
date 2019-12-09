@@ -6,6 +6,18 @@ import (
 
 //Define the metrics we wish to expose
 var (
+	zcashdBlockchainInfo = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "zcash_blockchain_info",
+			Help: "Information about the current state of the block chain"},
+		[]string{"network", "blocks"},
+	)
+	zcashdInfo = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "zcashd_info",
+			Help: "Node state info"},
+		[]string{"version"},
+	)
 	zcashdBlocks = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "zcash_blocks", Help: "the current number of blocks processed in the server"})
 	zcashdDifficulty = prometheus.NewGauge(prometheus.GaugeOpts{
@@ -85,6 +97,8 @@ var (
 
 func init() {
 	//Register metrics with prometheus
+	prometheus.MustRegister(zcashdBlockchainInfo)
+	prometheus.MustRegister(zcashdInfo)
 	prometheus.MustRegister(zcashdBlocks)
 	prometheus.MustRegister(zcashdDifficulty)
 	prometheus.MustRegister(zcashdSizeOnDisk)
