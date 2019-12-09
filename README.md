@@ -66,12 +66,12 @@ zcashdexporter_zcashd_exporter_1   zcashd_exporter --rpc.host ...   Up      0.0.
 
 zcashd
 ```
-docker logs zcashdexporter_zcashd_1
+docker logs zcashd_exporter_zcashd_1
 ```
 
 zcashd_exporter
 ```
-docker logs zcashdexporter_zcashd_exporter_1
+docker logs zcashd_exporter_zcashd_exporter_1
 ```
 
 If that's looking good, check `prometheus` for metric collection
